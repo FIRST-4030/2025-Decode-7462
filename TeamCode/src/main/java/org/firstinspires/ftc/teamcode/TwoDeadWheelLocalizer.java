@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.GeneralConstants.PRIMARY_BOT;
+import static org.firstinspires.ftc.teamcode.GeneralConstants.SECONDARY_BOT;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -27,9 +30,12 @@ import org.firstinspires.ftc.teamcode.messages.TwoDeadWheelInputsMessage;
 
 @Config
 public final class TwoDeadWheelLocalizer implements Localizer {
+    public static int yTicks = 13000;
     public static class Params {
-        public double parYTicks = 0.0; // y position of the parallel encoder (in tick units)
-        public double perpXTicks = 0.0; // x position of the perpendicular encoder (in tick units)
+        public int parYTicks;
+        public int perpXTicks;
+        public double parallelDistance = 6.25;
+        public double perpDistance = 3.1;
     }
 
     public static Params PARAMS = new Params();
@@ -47,6 +53,10 @@ public final class TwoDeadWheelLocalizer implements Localizer {
     private Pose2d pose;
 
     public TwoDeadWheelLocalizer(HardwareMap hardwareMap, IMU imu, double inPerTick, Pose2d initialPose) {
+
+        // set PARAMS based upon the network you are connected to
+        setParams();
+
         // TODO: make sure your config has **motors** with these names (or change them)
         //   the encoders should be plugged into the slot matching the named motor
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
@@ -61,9 +71,9 @@ public final class TwoDeadWheelLocalizer implements Localizer {
 
         this.inPerTick = inPerTick;
 
-        FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", PARAMS);
-
         pose = initialPose;
+
+        FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", PARAMS);
     }
 
     @Override
@@ -141,5 +151,20 @@ public final class TwoDeadWheelLocalizer implements Localizer {
 
         pose = pose.plus(twist.value());
         return twist.velocity().value();
+    }
+
+    private void setParams() {
+        if (MecanumDrive.macAddress.equals(PRIMARY_BOT)) {
+            PARAMS.parYTicks = 10900;  // y position of the parallel encoder (in tick units)
+            PARAMS.perpXTicks = -5400; //PARAMS.perpXTicks = -6428; // x position of the perpendicular encoder (in tick units)
+//            PARAMS.parYTicks = parallelDistance / NewMecanumDrive.PARAMS.inPerTick;      // y position of the parallel encoder (in tick units)
+//            PARAMS.perpXTicks = -perpDistance / NewMecanumDrive.PARAMS.lateralInPerTick; // x position of the perpendicular encoder (in tick units)
+        } else if (MecanumDrive.macAddress.equals(SECONDARY_BOT)){
+            PARAMS.perpXTicks = -5400; //PARAMS.perpXTicks = -6428; // x position of the perpendicular encoder (in tick units)
+            PARAMS.parYTicks = yTicks;  // y position of the parallel encoder (in tick units)
+//            PARAMS.parYTicks = (int)(PARAMS.parallelDistance / NewMecanumDrive.PARAMS.inPerTick);      // y position of the parallel encoder (in tick units)
+            //PARAMS.perpXTicks = (int)(-PARAMS.perpDistance / NewMecanumDrive.PARAMS.lateralInPerTick); // x position of the perpendicular encoder (in tick units)
+        }
+        else {}
     }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.GeneralConstants.PRIMARY_BOT;
+import static org.firstinspires.ftc.teamcode.GeneralConstants.SECONDARY_BOT;
 
 import androidx.annotation.NonNull;
 
@@ -27,6 +28,7 @@ import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.LazyHardwareMapImu;
+import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.acmerobotics.roadrunner.ftc.LynxFirmware;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
@@ -56,14 +58,15 @@ import java.util.List;
 
 @Config
 public final class MecanumDrive {
+    private final LogFile filePtr;
+    private final boolean writeIt;
+
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
-        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection;
+        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection;
 
         // drive model parameters
         public double inPerTick;
@@ -81,7 +84,7 @@ public final class MecanumDrive {
         public double maxProfileAccel;
 
         // turn profile parameters (in radians)
-        public double maxAngVel; // shared with path
+        public double maxAngVel;
         public double maxAngAccel;
 
         // path controller gains
@@ -116,6 +119,8 @@ public final class MecanumDrive {
     public final LazyHardwareMapImu teleOpImu;
 
     public final Localizer localizer;
+    public Pose2d pose;
+
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
@@ -227,9 +232,12 @@ public final class MecanumDrive {
         }
     }
 
-    public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+    public MecanumDrive(HardwareMap hardwareMap, Pose2d pose, LogFile filePtr, boolean writeIt) {
+        this.pose = pose;
+        this.filePtr = filePtr;
+        this.writeIt = writeIt;
 
-        macAddress = controlHub.getMacAddress();
+        this.macAddress = controlHub.getMacAddress();
 
         // set PARAMS based upon the network you are connected to
         setParams();
@@ -262,7 +270,7 @@ public final class MecanumDrive {
             rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
             rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         }
-        else {
+        else if (macAddress.equals(SECONDARY_BOT)) {
             leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
             leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
             rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -292,6 +300,7 @@ public final class MecanumDrive {
                 break;
             }
         }
+
         if(reset){
             teleOpImu.get().resetYaw();
             reset = false;
@@ -549,8 +558,7 @@ public final class MecanumDrive {
         }
 
         estimatedPoseWriter.write(new PoseMessage(localizer.getPose()));
-        
-        
+
         return vel;
     }
 
@@ -587,70 +595,6 @@ public final class MecanumDrive {
         );
     }
 
-    private void setParams() {
-
-        if (macAddress.equals(PRIMARY_BOT)) {
-
-            // drive model parameters
-            PARAMS.inPerTick = 1;
-            PARAMS.lateralInPerTick = PARAMS.inPerTick;
-            PARAMS.trackWidthTicks = 0;
-
-            // feedforward parameters (in tick units)
-            PARAMS.kS = 0;
-            PARAMS.kV = 0;
-            PARAMS.kA = 0;
-
-            // path profile parameters (in inches)
-            PARAMS.maxWheelVel = 50;
-            PARAMS.minProfileAccel = -30;
-            PARAMS.maxProfileAccel = 50;
-
-            // turn profile parameters (in radians)
-            PARAMS.maxAngVel = Math.PI; // shared with path
-            PARAMS.maxAngAccel = Math.PI;
-
-            // path controller gains
-            PARAMS.axialGain = 0.0;
-            PARAMS.lateralGain = 0.0;
-            PARAMS.headingGain = 0.0; // shared with turn
-
-            PARAMS.axialVelGain = 0.0;
-            PARAMS.lateralVelGain = 0.0;
-            PARAMS.headingVelGain = 0.0; // shared with turn //
-
-        } else {
-
-            // drive model parameters
-            PARAMS.inPerTick = 1;
-            PARAMS.lateralInPerTick = PARAMS.inPerTick;
-            PARAMS.trackWidthTicks = 0;
-
-            // feedforward parameters (in tick units)
-            PARAMS.kS = 0;
-            PARAMS.kV = 0;
-            PARAMS.kA = 0;
-
-            // path profile parameters (in inches)
-            PARAMS.maxWheelVel = 50;
-            PARAMS.minProfileAccel = -30;
-            PARAMS.maxProfileAccel = 50;
-
-            // turn profile parameters (in radians)
-            PARAMS.maxAngVel = Math.PI; // shared with path
-            PARAMS.maxAngAccel = Math.PI;
-
-            // path controller gains
-            PARAMS.axialGain = 0.0;
-            PARAMS.lateralGain = 0.0;
-            PARAMS.headingGain = 0.0; // shared with turn
-
-            PARAMS.axialVelGain = 0.0;
-            PARAMS.lateralVelGain = 0.0;
-            PARAMS.headingVelGain = 0.0; // shared with turn //
-        }
-    }
-
     private void initializeOtherParameters() {
 
         kinematics = new MecanumKinematics(
@@ -661,9 +605,98 @@ public final class MecanumDrive {
 
         defaultVelConstraint = new MinVelConstraint(Arrays.asList(
                 kinematics.new WheelVelConstraint(PARAMS.maxWheelVel),
-                new AngularVelConstraint(PARAMS.maxAngVel)
-        ));
+                new AngularVelConstraint(PARAMS.maxAngVel)));
 
         defaultAccelConstraint = new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
+    }
+
+    private void setParams() {
+        // TODO: fill in these values based on
+        //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
+        PARAMS.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+
+        if (macAddress.equals(PRIMARY_BOT)) {
+            PARAMS.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+
+            PARAMS.inPerTick = 1;
+            PARAMS.lateralInPerTick = PARAMS.inPerTick;
+            PARAMS.trackWidthTicks = 0;
+
+            // feedforward parameters (in tick units)
+            PARAMS.kS = 0;
+            PARAMS.kV = 0;
+            PARAMS.kA = 0;
+
+            // path profile parameters (in inches)
+            PARAMS.maxWheelVel = 50;
+            PARAMS.minProfileAccel = -30;
+            PARAMS.maxProfileAccel = 50;
+
+            // turn profile parameters (in radians)
+            PARAMS.maxAngVel = Math.PI; // shared with path
+            PARAMS.maxAngAccel = Math.PI;
+
+            // path controller gains
+            PARAMS.axialGain = 0.0;
+            PARAMS.lateralGain = 0.0;
+            PARAMS.headingGain = 0.0; // shared with turn
+
+            PARAMS.axialVelGain = 0.0;
+            PARAMS.lateralVelGain = 0.0;
+            PARAMS.headingVelGain = 0.0; // shared with turn //
+
+        } else if (macAddress.equals(SECONDARY_BOT)) {
+            PARAMS.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+
+            PARAMS.inPerTick = 1;
+            PARAMS.lateralInPerTick = PARAMS.inPerTick;
+            PARAMS.trackWidthTicks = 0;
+
+            // feedforward parameters (in tick units)
+            PARAMS.kS = 0;
+            PARAMS.kV = 0;
+            PARAMS.kA = 0;
+
+            // path profile parameters (in inches)
+            PARAMS.maxWheelVel = 50;
+            PARAMS.minProfileAccel = -30;
+            PARAMS.maxProfileAccel = 50;
+
+            // turn profile parameters (in radians)
+            PARAMS.maxAngVel = Math.PI; // shared with path
+            PARAMS.maxAngAccel = Math.PI;
+
+            // path controller gains
+            PARAMS.axialGain = 0.0;
+            PARAMS.lateralGain = 0.0;
+            PARAMS.headingGain = 0.0; // shared with turn
+
+            PARAMS.axialVelGain = 0.0;
+            PARAMS.lateralVelGain = 0.0;
+            PARAMS.headingVelGain = 0.0; // shared with turn //
+        } else {
+            PARAMS.inPerTick = 1;
+            PARAMS.lateralInPerTick = PARAMS.inPerTick;
+            PARAMS.trackWidthTicks = 0;
+
+            PARAMS.kS = 0;
+            PARAMS.kV = 0;
+            PARAMS.kA = 0;
+
+            PARAMS.maxWheelVel = 50;
+            PARAMS.minProfileAccel = -30;
+            PARAMS.maxProfileAccel = 50;
+
+            PARAMS.axialGain = 0.0;
+            PARAMS.lateralGain = 0.0;
+            PARAMS.headingGain = 0.0; // shared with turn
+        }
+
+        PARAMS.maxAngVel = Math.PI;
+        PARAMS.maxAngAccel = Math.PI;
+
+        PARAMS.axialVelGain = 0.0;
+        PARAMS.lateralVelGain = 0.0;
+        PARAMS.headingVelGain = 0.0;
     }
 }

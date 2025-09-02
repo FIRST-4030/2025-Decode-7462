@@ -100,6 +100,22 @@ public class LogFile {
 
     /**
      *
+     * @param vector - heading and position
+     */
+    public void logDetails(PoseVelocity2d vector) {
+        deltaTime = System.currentTimeMillis() - absoluteStartTime;
+        int filter = 0;
+        String message = filter + "," +
+                String.format(Locale.US, "%.4f", (deltaTime/1000.0)) + "," +
+                String.format(Locale.US, "%.4f", vector.angVel) + "," +
+                String.format(Locale.US, "%.4f", vector.linearVel.x) + "," +
+                String.format(Locale.US, "%.4f", vector.linearVel.y);
+
+        localLog( logWriter, message );
+    }
+
+    /**
+     *
      * @param pose - x & y position of the robot
      * @param label - text string used to describe the sample
      */
@@ -149,14 +165,14 @@ public class LogFile {
         localLog( logDelta, message );
 
         message = String.format(Locale.US, "%.2f", _start.position.x) + "," +
-                String.format(Locale.US, "%.2f", _start.position.y) + "," +
-                String.format(Locale.US, "%.2f", Math.toDegrees(_start.heading.toDouble())) + "," +
-                String.format(Locale.US, "%.2f", _target.position.x) + "," +
-                String.format(Locale.US, "%.2f", _target.position.y) + "," +
-                String.format(Locale.US, "%.2f", Math.toDegrees(_target.heading.toDouble())) + "," +
-                String.format(Locale.US, "%.2f", (_start.position.x-_target.position.x)) + "," +
-                String.format(Locale.US, "%.2f", (_start.position.y-_target.position.y)) + "," +
-                String.format(Locale.US, "%.2f", (Math.toDegrees(_start.heading.toDouble()))-Math.toDegrees(_target.heading.toDouble()));
+                  String.format(Locale.US, "%.2f", _start.position.y) + "," +
+                  String.format(Locale.US, "%.2f", Math.toDegrees(_start.heading.toDouble())) + "," +
+                  String.format(Locale.US, "%.2f", _target.position.x) + "," +
+                  String.format(Locale.US, "%.2f", _target.position.y) + "," +
+                  String.format(Locale.US, "%.2f", Math.toDegrees(_target.heading.toDouble())) + "," +
+                  String.format(Locale.US, "%.2f", (_start.position.x-_target.position.x)) + "," +
+                  String.format(Locale.US, "%.2f", (_start.position.y-_target.position.y)) + "," +
+                  String.format(Locale.US, "%.2f", (Math.toDegrees(_start.heading.toDouble()))-Math.toDegrees(_target.heading.toDouble()));
         localLog( logDelta, message );
     }
 

@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
+import org.firstinspires.ftc.teamcode.LogFile;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.OTOSLocalizer;
 import org.firstinspires.ftc.teamcode.PinpointLocalizer;
@@ -50,6 +51,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class TuningOpModes {
+    public static boolean logDetails = false;
+
+    static LogFile detailsLog;
+
     // TODO: change this to TankDrive.class if you're using tank
     public static final Class<?> DRIVE_CLASS = MecanumDrive.class;
 
@@ -128,7 +133,7 @@ public final class TuningOpModes {
         DriveViewFactory dvf;
         if (DRIVE_CLASS.equals(MecanumDrive.class)) {
             dvf = hardwareMap -> {
-                MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0), detailsLog, logDetails);
                 LazyImu lazyImu = md.lazyImu;
 
                 List<EncoderGroup> encoderGroups = new ArrayList<>();
@@ -167,7 +172,7 @@ public final class TuningOpModes {
                     parEncs.add(new EncoderRef(0, 0));
                     perpEncs.add(new EncoderRef(0, 1));
                     lazyImu = new OTOSIMU(ol.otos);
-                }  else if (md.localizer instanceof PinpointLocalizer) {
+                } else if (md.localizer instanceof PinpointLocalizer) {
                     PinpointView pv = makePinpointView((PinpointLocalizer) md.localizer);
                     encoderGroups.add(new PinpointEncoderGroup(pv));
                     parEncs.add(new EncoderRef(0, 0));
@@ -178,7 +183,7 @@ public final class TuningOpModes {
                 }
 
                 return new DriveView(
-                    DriveType.MECANUM,
+                        DriveType.MECANUM,
                         MecanumDrive.PARAMS.inPerTick,
                         MecanumDrive.PARAMS.maxWheelVel,
                         MecanumDrive.PARAMS.minProfileAccel,
@@ -244,7 +249,7 @@ public final class TuningOpModes {
                     ));
                     parEncs.add(new EncoderRef(0, 0));
                     perpEncs.add(new EncoderRef(0, 1));
-                }  else if (td.localizer instanceof PinpointLocalizer) {
+                } else if (td.localizer instanceof PinpointLocalizer) {
                     PinpointView pv = makePinpointView((PinpointLocalizer) td.localizer);
                     encoderGroups.add(new PinpointEncoderGroup(pv));
                     parEncs.add(new EncoderRef(0, 0));
@@ -285,7 +290,6 @@ public final class TuningOpModes {
             throw new RuntimeException();
         }
 
-        manager.register(metaForClass(LocalizationTest.class), LocalizationTest.class);
         if (ENABLE_CALIBRATION) {
             manager.register(metaForClass(AngularRampLogger.class), new AngularRampLogger(dvf));
             manager.register(metaForClass(ForwardPushTest.class), new ForwardPushTest(dvf));
@@ -304,18 +308,21 @@ public final class TuningOpModes {
 //            manager.register(metaForClass(OTOSHeadingOffsetTuner.class), new OTOSHeadingOffsetTuner(dvf));
 //            manager.register(metaForClass(OTOSPositionOffsetTuner.class), new OTOSPositionOffsetTuner(dvf));
         }
+        manager.register(metaForClass(LocalizationTest.class), LocalizationTest.class);
 
-        FtcDashboard.getInstance().withConfigRoot(configRoot -> {
-            for (Class<?> c : Arrays.asList(
-                    AngularRampLogger.class,
-                    ForwardRampLogger.class,
-                    LateralRampLogger.class,
-                    ManualFeedforwardTuner.class,
-                    MecanumMotorDirectionDebugger.class,
-                    ManualFeedbackTuner.class
-            )) {
-                configRoot.putVariable(c.getSimpleName(), ReflectionConfig.createVariableFromClass(c));
-            }
-        });
+        if (ENABLE_CALIBRATION) {
+            FtcDashboard.getInstance().withConfigRoot(configRoot -> {
+                for (Class<?> c : Arrays.asList(
+                        AngularRampLogger.class,
+                        ForwardRampLogger.class,
+                        LateralRampLogger.class,
+                        ManualFeedforwardTuner.class,
+                        MecanumMotorDirectionDebugger.class,
+                        ManualFeedbackTuner.class
+                )) {
+                    configRoot.putVariable(c.getSimpleName(), ReflectionConfig.createVariableFromClass(c));
+                }
+            });
+        }
     }
 }
