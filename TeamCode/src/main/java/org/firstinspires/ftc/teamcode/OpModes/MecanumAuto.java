@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import androidx.annotation.NonNull;
@@ -28,11 +29,26 @@ public class MecanumAuto extends LinearOpMode {
     boolean side = true;
     boolean experimental = false;
 
+    double delay;
+    double delay1 = 1;
+
+    double delay2 = 2;
+
+    double delay3 = 3;
+
     public static boolean logHPZSide = false;
     public static boolean logGoalSide = false;
     public static boolean logDetails = false;
     public double waitForLaunch;
     public Pose2dWrapper startPose;
+    public Pose2dWrapper firstLaunchPose;
+    public Pose2dWrapper firstPickupPose;
+    public Pose2dWrapper firstPickupFinishedPose;
+    public Pose2dWrapper secondLaunchPose;
+    public Pose2dWrapper secondPickupFinishedPose;
+    public Pose2dWrapper thirdLaunchPose;
+    public Pose2dWrapper thirdPickupFinishedPose;
+
     LogFile HPZSideLog;
     LogFile goalSideLog;
     LogFile detailsLog;
@@ -71,12 +87,26 @@ public class MecanumAuto extends LinearOpMode {
             if (gamepad1.aWasReleased()) {
                 side = !side;
             }
+            if (gamepad1.dpadRightWasReleased())
+            {
+                delay = delay1;
+            }
+            if (gamepad1.dpadLeftWasReleased())
+            {
+                delay = delay2;
+            }
+            if (gamepad1.dpadUpWasReleased())
+            {
+                delay = delay3;
+            }
+
             telemetry.addData("Compiled on:", BuildConfig.COMPILATION_DATE);
             telemetry.addData("-----Initialization-----", "");
             telemetry.addLine();
             telemetry.addData("Auto Mode: ", side ? "HPZ side Scoring" : "Goal side Scoring");
             telemetry.addData("Experimental Mode? ", experimental ? "Enabled" : "Disabled");
             telemetry.addData("Press X to finalize values", inputComplete);
+            telemetry.addData("delay value", delay);
             telemetry.update();
 
         }
@@ -85,14 +115,18 @@ public class MecanumAuto extends LinearOpMode {
             /// each tile is 24, so 72 -s outer wall
             /// heading is 0 facing positive x and starts increasing in the +x +y section of the field.
             ///  heading is in radians, can use Math.toRadians() to put in degrees
-            startPose = new Pose2dWrapper(52, -52, 4.7123);
+            startPose = new Pose2dWrapper(52, -52, Math.toRadians(315));
+            firstLaunchPose = new Pose2dWrapper(12, -27, Math.toRadians(45));
+            firstPickupPose = new Pose2dWrapper(12, -27, Math.toRadians(90));
+            firstPickupFinishedPose = new Pose2dWrapper(12, -48, Math.toRadians(90));
+
             ///Experimental Auto-Code
             if (experimental) {
 
             }
         } else {
             ///Positions for when scoring on HPZ Side
-            startPose = new Pose2dWrapper(-72, -26, 4.7123);
+            startPose = new Pose2dWrapper(-72, -26, Math.toRadians(360));
         }
 
 
