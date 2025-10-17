@@ -115,7 +115,7 @@ public class MecanumAuto extends LinearOpMode {
             /// each tile is 24, so 72 -s outer wall
             /// heading is 0 facing positive x and starts increasing in the +x +y section of the field.
             ///  heading is in radians, can use Math.toRadians() to put in degrees
-            startPose = new Pose2dWrapper(52, -52, Math.toRadians(315));
+            startPose = new Pose2dWrapper(52, -52, Math.toRadians(135));
             firstLaunchPose = new Pose2dWrapper(12, -27, Math.toRadians(45));
             firstPickupPose = new Pose2dWrapper(12, -27, Math.toRadians(90));
             firstPickupFinishedPose = new Pose2dWrapper(12, -48, Math.toRadians(90));
@@ -126,7 +126,11 @@ public class MecanumAuto extends LinearOpMode {
             }
         } else {
             ///Positions for when scoring on HPZ Side
-            startPose = new Pose2dWrapper(-72, -26, Math.toRadians(360));
+            startPose = new Pose2dWrapper(-72, -26, Math.toRadians(0.1));
+            firstLaunchPose = new Pose2dWrapper(-36, -29, Math.toRadians(45));
+            firstPickupPose = new Pose2dWrapper(-36, -29, Math.toRadians(90));
+            firstPickupFinishedPose = new Pose2dWrapper(-36, -52, Math.toRadians(90));
+            secondLaunchPose = new Pose2dWrapper(-36, -52, Math.toRadians(45));
         }
 
 
