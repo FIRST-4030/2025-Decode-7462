@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.BuildConfig;
 import org.firstinspires.ftc.teamcode.LogFile;
+import org.firstinspires.ftc.teamcode.NewMecanumDrive;
 import org.firstinspires.ftc.teamcode.Pose2dWrapper;
 import org.firstinspires.ftc.teamcode.gamepad.InputAutoMapper;
 import org.firstinspires.ftc.teamcode.gamepad.InputHandler;
@@ -115,7 +116,7 @@ public class MecanumAuto extends LinearOpMode {
             /// each tile is 24, so 72 -s outer wall
             /// heading is 0 facing positive x and starts increasing in the +x +y section of the field.
             ///  heading is in radians, can use Math.toRadians() to put in degrees
-            startPose = new Pose2dWrapper(52, -52, Math.toRadians(315));
+            startPose = new Pose2dWrapper(52, -52, Math.toRadians(135));
             firstLaunchPose = new Pose2dWrapper(12, -27, Math.toRadians(45));
             firstPickupPose = new Pose2dWrapper(12, -27, Math.toRadians(90));
             firstPickupFinishedPose = new Pose2dWrapper(12, -48, Math.toRadians(90));
@@ -126,11 +127,15 @@ public class MecanumAuto extends LinearOpMode {
             }
         } else {
             ///Positions for when scoring on HPZ Side
-            startPose = new Pose2dWrapper(-72, -26, Math.toRadians(360));
+            startPose = new Pose2dWrapper(-72, -26, Math.toRadians(0.1));
+            firstLaunchPose = new Pose2dWrapper(-36, -29, Math.toRadians(45));
+            firstPickupPose = new Pose2dWrapper(-36, -29, Math.toRadians(90));
+            firstPickupFinishedPose = new Pose2dWrapper(-36, -52, Math.toRadians(90));
+            secondLaunchPose = new Pose2dWrapper(-36, -52, Math.toRadians(45));
         }
 
 
-
+        NewMecanumDrive drive = new NewMecanumDrive(hardwareMap, startPose.toPose2d(), detailsLog,true);
 
     /// START AUTO:
     waitForStart();
@@ -143,12 +148,54 @@ public class MecanumAuto extends LinearOpMode {
         if(!side)
 
     {
+        Actions.runBlocking(
+                drive.actionBuilder(startPose.toPose2d())
+                        .strafeToConstantHeading(firstLaunchPose.toPose2d().position)
+                        .build()
+        );
+        //wait for launch
+        //launch
+        Actions.runBlocking(
+                drive.actionBuilder(firstLaunchPose.toPose2d())
+                        .strafeToConstantHeading(firstPickupPose.toPose2d().position)
+                        .build()
+        );
+        Actions.runBlocking(
+                drive.actionBuilder(firstPickupPose.toPose2d())
+                        .strafeToConstantHeading(firstPickupFinishedPose.toPose2d().position)
+                        .build()
+        );
         if (!experimental) {
 
         }
     } else
 
     {
+        Actions.runBlocking(
+                drive.actionBuilder(startPose.toPose2d())
+                        .strafeToConstantHeading(firstLaunchPose.toPose2d().position)
+                        .build()
+        );
+        //wait for launch
+        //launch
+        Actions.runBlocking(
+                drive.actionBuilder(firstLaunchPose.toPose2d())
+                        .strafeToConstantHeading(firstPickupPose.toPose2d().position)
+                        .build()
+        );
+        Actions.runBlocking(
+                drive.actionBuilder(firstPickupPose.toPose2d())
+                        .strafeToConstantHeading(firstPickupFinishedPose.toPose2d().position)
+                        .build()
+        );
+        Actions.runBlocking(
+                drive.actionBuilder(firstPickupFinishedPose.toPose2d())
+                        .strafeToConstantHeading(secondLaunchPose.toPose2d().position)
+                        .build()
+        );
+        //wait for launch
+        //launch
+
         if (experimental) {
 
         } else {
