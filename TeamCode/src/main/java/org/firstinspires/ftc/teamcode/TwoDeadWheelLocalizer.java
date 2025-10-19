@@ -157,13 +157,13 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         if (MecanumDrive.macAddress.equals(PRIMARY_BOT)) {
             PARAMS.parYTicks = 10900;  // y position of the parallel encoder (in tick units)
             PARAMS.perpXTicks = -5400; //PARAMS.perpXTicks = -6428; // x position of the perpendicular encoder (in tick units)
-//            PARAMS.parYTicks = parallelDistance / NewMecanumDrive.PARAMS.inPerTick;      // y position of the parallel encoder (in tick units)
-//            PARAMS.perpXTicks = -perpDistance / NewMecanumDrive.PARAMS.lateralInPerTick; // x position of the perpendicular encoder (in tick units)
+//            PARAMS.parYTicks = parallelDistance / MecanumDrive.PARAMS.inPerTick;      // y position of the parallel encoder (in tick units)
+//            PARAMS.perpXTicks = -perpDistance / MecanumDrive.PARAMS.lateralInPerTick; // x position of the perpendicular encoder (in tick units)
         } else if (MecanumDrive.macAddress.equals(SECONDARY_BOT)){
             PARAMS.perpXTicks = -5400; //PARAMS.perpXTicks = -6428; // x position of the perpendicular encoder (in tick units)
             PARAMS.parYTicks = yTicks;  // y position of the parallel encoder (in tick units)
-//            PARAMS.parYTicks = (int)(PARAMS.parallelDistance / NewMecanumDrive.PARAMS.inPerTick);      // y position of the parallel encoder (in tick units)
-            //PARAMS.perpXTicks = (int)(-PARAMS.perpDistance / NewMecanumDrive.PARAMS.lateralInPerTick); // x position of the perpendicular encoder (in tick units)
+//            PARAMS.parYTicks = (int)(PARAMS.parallelDistance / MecanumDrive.PARAMS.inPerTick);      // y position of the parallel encoder (in tick units)
+            //PARAMS.perpXTicks = (int)(-PARAMS.perpDistance / MecanumDrive.PARAMS.lateralInPerTick); // x position of the perpendicular encoder (in tick units)
         }
         else {}
     }

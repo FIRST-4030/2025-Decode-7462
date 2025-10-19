@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.BuildConfig;
 import org.firstinspires.ftc.teamcode.LogFile;
-import org.firstinspires.ftc.teamcode.NewMecanumDrive;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Pose2dWrapper;
 import org.firstinspires.ftc.teamcode.gamepad.InputAutoMapper;
 import org.firstinspires.ftc.teamcode.gamepad.InputHandler;
@@ -135,7 +135,7 @@ public class MecanumAuto extends LinearOpMode {
         }
 
 
-        NewMecanumDrive drive = new NewMecanumDrive(hardwareMap, startPose.toPose2d(), detailsLog,true);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, startPose.toPose2d(), detailsLog,true);
 
     /// START AUTO:
     waitForStart();

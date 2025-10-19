@@ -96,9 +96,9 @@ public final class MecanumDrive {
         public double headingVelGain; // shared with turn
     }
 
-    public static Params PARAMS = new Params();
-
     public static String macAddress;
+
+    public static Params PARAMS = new Params();
 
     public ControlHub controlHub = new ControlHub();
 
@@ -117,7 +117,7 @@ public final class MecanumDrive {
     public final LazyHardwareMapImu lazyImu;
     public final LazyHardwareMapImu teleOpImu;
 
-    public final BackupLocalizer localizer;
+    public final Localizer localizer;
     public Pose2d pose;
 
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
@@ -135,7 +135,7 @@ public final class MecanumDrive {
     boolean dpadInUse = false;
     public ElapsedTime correctionTimer = new ElapsedTime();
 
-    public class DriveLocalizer implements BackupLocalizer {
+    public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftBack, rightBack, rightFront;
         public final IMU imu;
 
