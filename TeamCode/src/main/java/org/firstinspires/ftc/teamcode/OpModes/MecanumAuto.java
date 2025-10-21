@@ -136,23 +136,35 @@ public class MecanumAuto extends LinearOpMode {
 
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose.toPose2d(), detailsLog,true);
-
+        if (!drive.controlHub.isMacAddressValid()) {
+            drive.controlHub.reportBadMacAddress(telemetry,hardwareMap);
+        }
     /// START AUTO:
+        telemetry.addData("waiting for start","");
+        telemetry.update();
     waitForStart();
+        telemetry.addData("started","");
+        telemetry.update();
         if(
 
     isStopRequested())return;
+        telemetry.addData("stop not requested","");
+        telemetry.update();
 
 
     /// Auto code for when scoring Specimens
         if(!side)
 
     {
+        telemetry.addData("goal side started","");
+        telemetry.update();
         Actions.runBlocking(
                 drive.actionBuilder(startPose.toPose2d())
                         .strafeToConstantHeading(firstLaunchPose.toPose2d().position)
                         .build()
         );
+        telemetry.addData("move1","");
+        telemetry.update();
         //wait for launch
         //launch
         Actions.runBlocking(
@@ -160,22 +172,32 @@ public class MecanumAuto extends LinearOpMode {
                         .strafeToConstantHeading(firstPickupPose.toPose2d().position)
                         .build()
         );
+        telemetry.addData("move2","");
+        telemetry.update();
         Actions.runBlocking(
                 drive.actionBuilder(firstPickupPose.toPose2d())
                         .strafeToConstantHeading(firstPickupFinishedPose.toPose2d().position)
                         .build()
         );
-        if (!experimental) {
+        telemetry.addData("move3","");
+        telemetry.update();
+        /*if (experimental) {
 
-        }
+            telemetry.addData("goal side experimental started","");
+            telemetry.update();
+        }*/
     } else
 
     {
+        telemetry.addData("HPZ side started","");
+        telemetry.update();
         Actions.runBlocking(
                 drive.actionBuilder(startPose.toPose2d())
                         .strafeToConstantHeading(firstLaunchPose.toPose2d().position)
                         .build()
         );
+        telemetry.addData("move1","");
+        telemetry.update();
         //wait for launch
         //launch
         Actions.runBlocking(
@@ -183,26 +205,32 @@ public class MecanumAuto extends LinearOpMode {
                         .strafeToConstantHeading(firstPickupPose.toPose2d().position)
                         .build()
         );
+        telemetry.addData("move2","");
+        telemetry.update();
         Actions.runBlocking(
                 drive.actionBuilder(firstPickupPose.toPose2d())
                         .strafeToConstantHeading(firstPickupFinishedPose.toPose2d().position)
                         .build()
         );
+        telemetry.addData("move3","");
+        telemetry.update();
         Actions.runBlocking(
                 drive.actionBuilder(firstPickupFinishedPose.toPose2d())
                         .strafeToConstantHeading(secondLaunchPose.toPose2d().position)
                         .build()
         );
+        telemetry.addData("move4","");
+        telemetry.update();
         //wait for launch
         //launch
 
-        if (experimental) {
+        /*if (experimental) {
 
         } else {
             /// Auto code for when scoring on HPZ side
 
 
-        }
+        }*/
     }
 }
 

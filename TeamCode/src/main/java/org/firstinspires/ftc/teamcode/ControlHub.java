@@ -38,6 +38,7 @@ public class ControlHub {
             {"7C:A7:B0:07:BE:CF", "8628-RC-2",        "8628 Backup Bot"},
             {"C8:FE:0F:2C:56:14", "7462-RC",          "7462 Competition Bot"},
             {"7C:A7:B0:0F:CB:78", "7462-RC-2",        "7462 Demo Base"},
+            {"30:7B:C9:53:A0:80", "Ingraham-Pinpoint", "7462 Pinpoint Test Bot"},
             {"7C:A7:B0:09:82:54", "FTC-7462-TankGuy", "Duck Bot"}
     };
 

@@ -4,7 +4,7 @@ public class GeneralConstants {
 
     public static final String PRIMARY_BOT = ControlHub.getBotAddress(2);
     public static final String SECONDARY_BOT = ControlHub.getBotAddress(3);
-    public static final String TERTIARY_BOT = ControlHub.getBotAddress(0);
+    public static final String TERTIARY_BOT = ControlHub.getBotAddress(4);
     public static final boolean ENABLE_CALIBRATION = true;
 
     //These constant names allow for more effective grouping when the

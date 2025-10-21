@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.GeneralConstants.PRIMARY_BOT;
 import static org.firstinspires.ftc.teamcode.GeneralConstants.SECONDARY_BOT;
+import static org.firstinspires.ftc.teamcode.GeneralConstants.TERTIARY_BOT;
 
 import androidx.annotation.NonNull;
 
@@ -673,6 +674,37 @@ public final class MecanumDrive {
             PARAMS.axialVelGain = 0.0;
             PARAMS.lateralVelGain = 0.0;
             PARAMS.headingVelGain = 0.0; // shared with turn //
+        }
+            else if(macAddress.equals(TERTIARY_BOT)) {
+            PARAMS.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+
+            PARAMS.inPerTick = 1;
+            PARAMS.lateralInPerTick = PARAMS.inPerTick;
+            PARAMS.trackWidthTicks = 0;
+
+            // feedforward parameters (in tick units)
+            PARAMS.kS = 0;
+            PARAMS.kV = 0;
+            PARAMS.kA = 0;
+
+            // path profile parameters (in inches)
+            PARAMS.maxWheelVel = 50;
+            PARAMS.minProfileAccel = -30;
+            PARAMS.maxProfileAccel = 50;
+
+            // turn profile parameters (in radians)
+            PARAMS.maxAngVel = Math.PI; // shared with path
+            PARAMS.maxAngAccel = Math.PI;
+
+            // path controller gains
+            PARAMS.axialGain = 0.0;
+            PARAMS.lateralGain = 0.0;
+            PARAMS.headingGain = 0.0; // shared with turn
+
+            PARAMS.axialVelGain = 0.0;
+            PARAMS.lateralVelGain = 0.0;
+            PARAMS.headingVelGain = 0.0; // shared with turn //
+
         } else {
             PARAMS.inPerTick = 1;
             PARAMS.lateralInPerTick = PARAMS.inPerTick;
